@@ -13,6 +13,7 @@ def generate_launch_description():
 
     world_file = os.path.join(pkg_path, "worlds", "world.sdf")
     xacro_file = os.path.join(pkg_path, "urdf", "world.xacro")
+    rviz_config = os.path.join(pkg_path, "rviz", "fleet.rviz")
 
     # Start Gazebo Harmonic
     gazebo = ExecuteProcess(
@@ -34,7 +35,16 @@ def generate_launch_description():
         parameters=[{"robot_description": robot_description}]
     )
 
-    # Spawn robot into Gazebo (CORRECT WAY for Jazzy + Harmonic)
+    # RViz (no config, default)
+    rviz = Node(
+        package="rviz2",
+        executable="rviz2",
+        name="rviz2",
+        arguments=["-d", rviz_config],
+        output="screen",
+    )
+
+    # Spawn robot into Gazebo
     spawn_robot = TimerAction(
         period=5.0,
         actions=[ExecuteProcess(
@@ -47,7 +57,7 @@ def generate_launch_description():
         )]
     )
 
-    # --- bridge ---
+    # Bridge
     bridge = ExecuteProcess(
         cmd=[
             "ros2", "run", "ros_gz_bridge", "parameter_bridge",
@@ -71,13 +81,13 @@ def generate_launch_description():
         output="screen"
     )
 
-
     return LaunchDescription([
         gazebo,
         bridge,
+        rsp,
+        rviz,
+        spawn_robot,
         load_jsb,
         load_diff,
-        load_arm,
-        rsp,
-        spawn_robot,
+        load_arm
     ])

@@ -87,7 +87,7 @@ check_urdf /tmp/test.urdf
 - [BUILD](#build)
 - Terminal 1: ros2 launch fleet_description gazebo_rviz.launch.py
 
-## GOAL 2: Move model in gazebo via commands
+## GOAL 2: Move model in gazebo and rviz via commands
 
 - Remove caster wheels and add front wheels & back wheels
 - Add a controller manager and define their parameters
@@ -125,3 +125,7 @@ points:
 "
 ```
 - ![alt text](./src/images/image-3.png)
+- Add Spawn node with fleet.rviz
+- Fixed Frame -> Odom, Add Robot Model, Add TF save config as fleet.rviz
+![alt text](./src/images/image-6.png)
+![alt text](./src/images/image-5.png)

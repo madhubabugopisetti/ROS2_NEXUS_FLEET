@@ -129,3 +129,14 @@ points:
 - Fixed Frame -> Odom, Add Robot Model, Add TF save config as fleet.rviz
 ![alt text](./src/images/image-6.png)
 ![alt text](./src/images/image-5.png)
+
+## GOAL3: Create a map
+
+### Step 1: LiDAR & camer Setup
+- Add objects in world.sdf
+- Add **gpu_lidar**, **camera** sensors and **gz-sim-sensors-system** plugin in world.xacro
+- Add **/scan**, **/camera/image**, bridges in gazebo_rviz.launch.py
+- [BUILD](#build)
+- Terminal 1: ros2 launch fleet_description gazebo_rviz.launch.py
+- Add image, topic as /camera/image and ScanLaser, topic as /scan -> save config
+- ![alt text](./src/images/image-7.png)

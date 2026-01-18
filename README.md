@@ -72,3 +72,17 @@ colcon build
 - Add gazebo node in gazebo_rviz.launch.py
 - Terminal 1: ros2 launch fleet_description gazebo_rviz.launch.py
 ![alt text](./src/images/image-1.png)
+
+
+### STEP 4: Create model
+- car.xacro code from **ROS2_NEXUS_ADS**, and add **${prefix}** in link name
+- arm.xacro code from **ROS2_NEXUS_AGS**, and add **${prefix}** in link name
+- world.xacro add a joint to attach car + arm
+- Verify
+```
+ros2 run xacro xacro ~/ros2_nexus_fleet_ws/src/fleet_description/urdf/world.xacro > /tmp/test.urdf
+check_urdf /tmp/test.urdf
+```
+- Add spawn node in gazebo_rviz.launch.py
+- [BUILD](#build)
+- Terminal 1: ros2 launch fleet_description gazebo_rviz.launch.py

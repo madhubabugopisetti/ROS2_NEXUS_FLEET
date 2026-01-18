@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<robot name="nexus_with_arm" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- Include parts -->
+    <xacro:include filename="$(find fleet_description)/urdf/car.xacro" />
+    <xacro:include filename="$(find fleet_description)/urdf/arm.xacro" />
+
+    <!-- Spawn car -->
+    <xacro:car_robot prefix="car_" />
+
+    <!-- Spawn arm -->
+    <xacro:arm_robot prefix="arm_" />
+
+    <!-- FIXED JOINT: Attach arm to car -->
+    <joint name="arm_mount_joint" type="fixed">
+        <parent link="car_base_link" />
+        <child link="arm_base_link" />
+        <!-- Position arm on top of car -->
+        <origin xyz="0 0 0.15" rpy="0 0 0"/>
+    </joint>
+
+</robot>

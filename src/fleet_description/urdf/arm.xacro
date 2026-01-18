@@ -1,0 +1,161 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:macro name="arm_robot" params="prefix">
+
+        <link name="${prefix}base_link">
+            <visual>
+                <origin xyz="0 0 0.05" />
+                <geometry>
+                    <box size="0.3 0.3 0.1" />
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0.05" />
+                <geometry>
+                    <box size="0.3 0.3 0.1" />
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="50" />
+                <inertia ixx="0.5" iyy="0.5" izz="0.5" ixy="0" ixz="0" iyz="0" />
+            </inertial>
+        </link>
+
+        <joint name="${prefix}shoulder_joint" type="revolute">
+            <parent link="${prefix}base_link" />
+            <child link="${prefix}shoulder_link" />
+            <origin xyz="0 0 0.05" />
+            <axis xyz="0 0 1" />
+            <limit lower="-3.14" upper="3.14" effort="300" velocity="1" />
+        </joint>
+
+        <link name="${prefix}shoulder_link">
+            <visual>
+                <origin xyz="0 0 0.2" />
+                <geometry>
+                    <cylinder length="0.4" radius="0.04" />
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0.2" />
+                <geometry>
+                    <cylinder length="0.4" radius="0.04" />
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="2" />
+                <inertia ixx="0.02" iyy="0.02" izz="0.02" ixy="0" ixz="0" iyz="0" />
+            </inertial>
+        </link>
+
+        <joint name="${prefix}elbow_joint" type="revolute">
+            <parent link="${prefix}shoulder_link" />
+            <child link="${prefix}elbow_link" />
+            <origin xyz="0 0 0.4" />
+            <axis xyz="1 0 0" />
+            <limit lower="-1.57" upper="1.57" effort="300" velocity="1" />
+        </joint>
+
+        <link name="${prefix}elbow_link">
+            <visual>
+                <origin xyz="0 0 0.2" />
+                <geometry>
+                    <cylinder length="0.4" radius="0.035" />
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0.2" />
+                <geometry>
+                    <cylinder length="0.4" radius="0.035" />
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="1.5" />
+                <inertia ixx="0.015" iyy="0.015" izz="0.015" ixy="0" ixz="0" iyz="0" />
+            </inertial>
+        </link>
+
+        <joint name="${prefix}forearm_joint" type="revolute">
+            <parent link="${prefix}elbow_link" />
+            <child link="${prefix}forearm_link" />
+            <origin xyz="0 0 0.4" />
+            <axis xyz="1 0 0" />
+            <limit lower="-1.57" upper="1.57" effort="300" velocity="1" />
+        </joint>
+
+        <link name="${prefix}forearm_link">
+            <visual>
+                <origin xyz="0 0 0.15" />
+                <geometry>
+                    <cylinder length="0.3" radius="0.03" />
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0.15" />
+                <geometry>
+                    <cylinder length="0.3" radius="0.03" />
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="1" />
+                <inertia ixx="0.01" iyy="0.01" izz="0.01" ixy="0" ixz="0" iyz="0" />
+            </inertial>
+        </link>
+
+        <joint name="${prefix}wrist_pitch_joint" type="revolute">
+            <parent link="${prefix}forearm_link" />
+            <child link="${prefix}wrist_pitch_link" />
+            <origin xyz="0 0 0.3" />
+            <axis xyz="1 0 0" />
+            <limit lower="-1.57" upper="1.57" effort="100" velocity="1" />
+        </joint>
+
+        <link name="${prefix}wrist_pitch_link">
+            <visual>
+                <origin xyz="0 0 0.04" />
+                <geometry>
+                    <cylinder length="0.08" radius="0.025" />
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0.04" />
+                <geometry>
+                    <cylinder length="0.08" radius="0.025" />
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="0.4" />
+                <inertia ixx="0.002" iyy="0.002" izz="0.002" ixy="0" ixz="0" iyz="0" />
+            </inertial>
+        </link>
+
+        <joint name="${prefix}wrist_roll_joint" type="revolute">
+            <parent link="${prefix}wrist_pitch_link" />
+            <child link="${prefix}wrist_roll_link" />
+            <origin xyz="0 0 0.08" />
+            <axis xyz="0 0 1" />
+            <limit lower="-3.14" upper="3.14" effort="50" velocity="2" />
+        </joint>
+
+        <link name="${prefix}wrist_roll_link">
+            <visual>
+                <origin xyz="0 0 0.03" />
+                <geometry>
+                    <cylinder length="0.06" radius="0.022" />
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0.03" />
+                <geometry>
+                    <cylinder length="0.06" radius="0.022" />
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="0.3" />
+                <inertia ixx="0.001" iyy="0.001" izz="0.001" ixy="0" ixz="0" iyz="0" />
+            </inertial>
+        </link>
+
+    </xacro:macro>
+</robot>

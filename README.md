@@ -80,7 +80,7 @@ colcon build
 - world.xacro add a joint to attach car + arm
 - Verify
 ```
-ros2 run xacro xacro ~/ros2_nexus_fleet_ws/src/fleet_description/urdf/world.xacro > /tmp/test.urdf
+ros2 run xacro xacro ~/ros2_nexus_fleet_ws/src/fleet_description/urdf/nexus_fleet.xacro > /tmp/test.urdf
 check_urdf /tmp/test.urdf
 ```
 - Add spawn node in gazebo_rviz.launch.py
@@ -140,3 +140,6 @@ points:
 - Terminal 1: ros2 launch fleet_description gazebo_rviz.launch.py
 - Add image, topic as /camera/image and ScanLaser, topic as /scan -> save config
 - ![alt text](./src/images/image-7.png)
+
+export GZ_SIM_SYSTEM_PLUGIN_PATH=/opt/ros/$ROS_DISTRO/lib:$GZ_SIM_SYSTEM_PLUGIN_PATH
+export LD_LIBRARY_PATH=/opt/ros/$ROS_DISTRO/lib:$LD_LIBRARY_PATH

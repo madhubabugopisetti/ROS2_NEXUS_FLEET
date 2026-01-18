@@ -26,7 +26,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: LaserScan
+    SyncSource: ""
 Visualization Manager:
   Class: ""
   Displays:
@@ -66,82 +66,72 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        arm_elbow_link:
+        base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        arm_forearm_link:
+        camera_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        arm_gripper_base:
+        elbow_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        arm_gripper_camera_link:
+        forearm_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        arm_left_finger:
+        gripper_base:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        arm_right_finger:
+        left_finger:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        arm_shoulder_link:
+        right_finger:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        arm_wrist_pitch_link:
+        shoulder_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        arm_wrist_roll_link:
+        wheel_front_left:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        car_base_link:
+        wheel_front_right:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        car_camera_link:
+        wheel_rear_left:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        car_front_left_wheel:
+        wheel_rear_right:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        car_front_right_wheel:
+        wrist_pitch_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        car_lidar_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        car_rear_left_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        car_rear_right_wheel:
+        wrist_roll_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -161,72 +151,61 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        arm_elbow_link:
+        base_link:
           Value: true
-        arm_forearm_link:
+        camera_link:
           Value: true
-        arm_gripper_base:
-          Value: false
-        arm_gripper_camera_link:
-          Value: false
-        arm_left_finger:
-          Value: false
-        arm_right_finger:
+        elbow_link:
           Value: true
-        arm_shoulder_link:
+        forearm_link:
           Value: true
-        arm_wrist_pitch_link:
+        gripper_base:
           Value: true
-        arm_wrist_roll_link:
-          Value: false
-        car_base_link:
-          Value: false
-        car_camera_link:
-          Value: false
-        car_front_left_wheel:
+        left_finger:
           Value: true
-        car_front_right_wheel:
+        right_finger:
           Value: true
-        car_lidar_link:
-          Value: false
-        car_rear_left_wheel:
+        shoulder_link:
           Value: true
-        car_rear_right_wheel:
+        wheel_front_left:
           Value: true
-        odom:
-          Value: false
+        wheel_front_right:
+          Value: true
+        wheel_rear_left:
+          Value: true
+        wheel_rear_right:
+          Value: true
+        wrist_pitch_link:
+          Value: true
+        wrist_roll_link:
+          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: false
       Tree:
-        odom:
-          car_base_link:
-            arm_shoulder_link:
-              arm_elbow_link:
-                arm_forearm_link:
-                  arm_wrist_pitch_link:
-                    arm_wrist_roll_link:
-                      arm_gripper_base:
-                        arm_gripper_camera_link:
-                          {}
-                        arm_left_finger:
-                          {}
-                        arm_right_finger:
-                          {}
-            car_camera_link:
-              {}
-            car_front_left_wheel:
-              {}
-            car_front_right_wheel:
-              {}
-            car_lidar_link:
-              {}
-            car_rear_left_wheel:
-              {}
-            car_rear_right_wheel:
-              {}
+        base_link:
+          shoulder_link:
+            elbow_link:
+              forearm_link:
+                wrist_pitch_link:
+                  wrist_roll_link:
+                    gripper_base:
+                      camera_link:
+                        {}
+                      left_finger:
+                        {}
+                      right_finger:
+                        {}
+          wheel_front_left:
+            {}
+          wheel_front_right:
+            {}
+          wheel_rear_left:
+            {}
+          wheel_rear_right:
+            {}
       Update Interval: 0
       Value: true
     - Class: rviz_default_plugins/Image
@@ -280,7 +259,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: odom
+    Fixed Frame: base_link
     Frame Rate: 30
   Name: root
   Tools:

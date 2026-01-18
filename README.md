@@ -64,3 +64,11 @@ cd ~/ros2_nexus_fleet_ws
 
 colcon build
 ```
+
+### STEP 3: Create world and render in gazebo
+- Add folder config, launch, urdf, worlds, rviz, maps to CMakeLists.txt
+- Add world, walls in world.sdf
+- Terminal 1: gz sim -r ~/ros2_nexus_fleet_ws/src/fleet_description/worlds/world.sdf<br />
+- Add gazebo node in gazebo_rviz.launch.py
+- Terminal 1: ros2 launch fleet_description gazebo_rviz.launch.py
+![alt text](./src/images/image-1.png)

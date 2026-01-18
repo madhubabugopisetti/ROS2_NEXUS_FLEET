@@ -86,3 +86,42 @@ check_urdf /tmp/test.urdf
 - Add spawn node in gazebo_rviz.launch.py
 - [BUILD](#build)
 - Terminal 1: ros2 launch fleet_description gazebo_rviz.launch.py
+
+## GOAL 2: Move model in gazebo via commands
+
+- Remove caster wheels and add front wheels & back wheels
+- Add a controller manager and define their parameters
+- Remove base_link of arm , connect car_base_link to arm_shoulder_link
+- Add **clock**, jsb, **load_controller**(auto activate jps, diff_drive_controller, aarm_controllerc) nodes in gazebo_rviz.launch.py
+- [BUILD](#build)
+- Terminal 1: ros2 launch fleet_description gazebo_rviz.launch.py
+- ![alt text](./src/images/image-2.png)
+- Terminal 2: ros2 control list_controllers
+- Terminal 3: 
+```
+ros2 topic pub -r 10 /diff_drive_controller/cmd_vel geometry_msgs/msg/TwistStamped "
+header:
+    frame_id: car_base_link
+twist:
+    linear:
+        x: 0.3
+    angular:
+        z: 0.2
+"
+```
+- ![alt text](./src/images/image-4.png)
+- Terminal 4: 
+```
+ros2 topic pub --once /arm_controller/joint_trajectory trajectory_msgs/msg/JointTrajectory "
+joint_names:
+- arm_shoulder_joint
+- arm_elbow_joint
+- arm_forearm_joint
+- arm_wrist_pitch_joint
+- arm_wrist_roll_joint
+points:
+- positions: [0.5, 1.0, 0.5, 0.3, 0.0]
+    time_from_start: {sec: 3}
+"
+```
+- ![alt text](./src/images/image-3.png)

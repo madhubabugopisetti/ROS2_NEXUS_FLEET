@@ -1,0 +1,57 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 100
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    arm_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    diff_drive_controller:
+      type: diff_drive_controller/DiffDriveController
+
+
+arm_controller:
+  ros__parameters:
+    joints:
+      - arm_shoulder_joint
+      - arm_elbow_joint
+      - arm_forearm_joint
+      - arm_wrist_pitch_joint
+      - arm_wrist_roll_joint
+      - arm_left_finger_joint
+      - arm_right_finger_joint
+
+    command_interfaces:
+      - position
+
+    state_interfaces:
+      - position
+      - velocity
+
+    allow_partial_joints_goal: true
+
+    constraints:
+      stopped_velocity_tolerance: 0.01
+      goal_time: 0.0
+
+diff_drive_controller:
+  ros__parameters:
+    left_wheel_names:
+      - car_front_left_wheel_joint
+      - car_rear_left_wheel_joint
+
+    right_wheel_names:
+      - car_front_right_wheel_joint
+      - car_rear_right_wheel_joint
+
+    wheel_separation: 0.2
+    wheel_radius: 0.05
+
+    base_frame_id: car_base_link
+    odom_frame_id: odom
+
+    publish_rate: 50.0
+    cmd_vel_timeout: 0.5
+    enable_odom_tf: true

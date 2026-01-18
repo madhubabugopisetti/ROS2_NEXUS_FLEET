@@ -47,8 +47,37 @@ def generate_launch_description():
         )]
     )
 
+    # --- bridge ---
+    bridge = ExecuteProcess(
+        cmd=[
+            "ros2", "run", "ros_gz_bridge", "parameter_bridge",
+            "/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock",
+        ],
+        output="screen"
+    )
+    
+    load_jsb = ExecuteProcess(
+        cmd=["ros2", "control", "load_controller", "--set-state", "active", "joint_state_broadcaster"],
+        output="screen"
+    )
+
+    load_diff = ExecuteProcess(
+        cmd=["ros2", "control", "load_controller", "--set-state", "active", "diff_drive_controller"],
+        output="screen"
+    )
+
+    load_arm = ExecuteProcess(
+        cmd=["ros2", "control", "load_controller", "--set-state", "active", "arm_controller"],
+        output="screen"
+    )
+
+
     return LaunchDescription([
         gazebo,
+        bridge,
+        load_jsb,
+        load_diff,
+        load_arm,
         rsp,
         spawn_robot,
     ])

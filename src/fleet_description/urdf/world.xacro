@@ -9,14 +9,89 @@
     <xacro:car_robot prefix="car_" />
 
     <!-- Spawn arm -->
-    <xacro:arm_robot prefix="arm_" />
+    <xacro:arm_robot prefix="arm_" parent_link="car_base_link" />
 
-    <!-- FIXED JOINT: Attach arm to car -->
-    <joint name="arm_mount_joint" type="fixed">
-        <parent link="car_base_link" />
-        <child link="arm_base_link" />
-        <!-- Position arm on top of car -->
-        <origin xyz="0 0 0.15" rpy="0 0 0"/>
-    </joint>
+    <!-- ROS2 CONTROL -->
+    <ros2_control name="GazeboSimSystem" type="system">
+        <hardware>
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </hardware>
+        <joint name="arm_forearm_joint">
+            <command_interface name="position" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
 
+        <joint name="arm_wrist_pitch_joint">
+            <command_interface name="position" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="arm_wrist_roll_joint">
+            <command_interface name="position" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="arm_shoulder_joint">
+            <command_interface name="position" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="arm_elbow_joint">
+            <command_interface name="position" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="arm_left_finger_joint">
+            <command_interface name="position" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="arm_right_finger_joint">
+            <command_interface name="position" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="car_front_left_wheel_joint">
+            <command_interface name="velocity" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="car_front_right_wheel_joint">
+            <command_interface name="velocity" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="car_rear_left_wheel_joint">
+            <command_interface name="velocity" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <joint name="car_rear_right_wheel_joint">
+            <command_interface name="velocity" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+
+    </ros2_control>
+
+    <!-- REQUIRED FOR GAZEBO HARMONIC -->
+    <gazebo>
+        <plugin filename="libgz_ros2_control-system.so"
+            name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+            <parameters>
+                /home/madhu/ros2_nexus_fleet_ws/install/fleet_description/share/fleet_description/config/controllers.yaml
+            </parameters>
+        </plugin>
+    </gazebo>
 </robot>

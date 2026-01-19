@@ -8,6 +8,9 @@ pkill -f gz
 pkill -f rviz
 pkill -f nav2
 pkill -f slam_toolbox
+
+export GZ_SIM_SYSTEM_PLUGIN_PATH=/opt/ros/$ROS_DISTRO/lib:$GZ_SIM_SYSTEM_PLUGIN_PATH
+export LD_LIBRARY_PATH=/opt/ros/$ROS_DISTRO/lib:$LD_LIBRARY_PATH
 ```
 
 ### BUILD
@@ -141,5 +144,17 @@ points:
 - Add image, topic as /camera/image and ScanLaser, topic as /scan -> save config
 - ![alt text](./src/images/image-7.png)
 
-export GZ_SIM_SYSTEM_PLUGIN_PATH=/opt/ros/$ROS_DISTRO/lib:$GZ_SIM_SYSTEM_PLUGIN_PATH
-export LD_LIBRARY_PATH=/opt/ros/$ROS_DISTRO/lib:$LD_LIBRARY_PATH
+### Step 2: Create map
+- Create slam.launch.py to create map
+- Add red cube for pick up
+- Add blue cube for docking
+- [BUILD](#build)
+- Terminal 1: ros2 launch fleet_description gazebo_rviz.launch.py
+- ![alt text](./src/images/image-8.png)
+- Terminal 2: ros2 launch fleet_description slam.launch.py
+- Terminal 3: ros2 lifecycle set /slam_toolbox configure  ros2 lifecycle set /slam_toolbox activate
+- Fixed Frame -> map, Add Map, topic as /map
+- ![alt text](./src/images/image-9.png)
+- Terminal 4: ros2 run teleop_twist_keyboard teleop_twist_keyboard
+- ![alt text](./src/images/image-10.png)
+- Terminal 5: ros2 run nav2_map_server map_saver_cli -f ~/ros2_nexus_fleet_ws/src/fleet_description/maps/my_map

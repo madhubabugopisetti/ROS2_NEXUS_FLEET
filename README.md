@@ -226,3 +226,18 @@ chmod +x camera_view.py
 - ![alt text](./src/images/image-15.png)
 - Terminal 4: ros2 run nexu_arm_auto camera_view
 - ![dock view](./src/images/image-16.png)
+
+### STEP 2: Search box and Align Y-AXIS with PID
+```
+cd ~/ros2_nexus_fleet_ws/src/nexu_arm_auto/nexu_arm_auto
+touch search_align_shoulder.py
+chmod +x search_align_shoulder.py
+```
+- Add to console_scripts ```'search_align_shoulder = nexu_arm_auto.search_align_shoulder:main',```
+- [BUILD](#build)
+- ![alt text](./src/images/image-16.png)
+- Terminal 5: ros2 run nexu_arm_auto search_align_shoulder
+- ![dock view](./src/images/image-16.png)
+- ![alt text](./src/images/image-17.png)
+- ![alt text](./src/images/image-19.png)
+- ![alt text](./src/images/image-18.png)

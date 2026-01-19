@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'camera_view = nexu_arm_auto.camera_view:main',
+            'search_align_shoulder = nexu_arm_auto.search_align_shoulder:main',
         ],
     },
 )

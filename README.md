@@ -203,7 +203,32 @@ chmod +x auto_nav.py
 - Terminal 3: ros2 run nexus_car_auto_nav auto_nav
 - ![alt text](./src/images/image-13.png)
 
-# GOAL 7: Auto Pick object
+# GOAL 7: Move Scripts folder to new package
+- Terminal 1: 
+```
+cd ~/ros2_nexus_fleet_ws/src
+ros2 pkg create nexus_controls --build-type ament_python --dependencies rclpy sensor_msgs cv_bridge geometry_msgs trajectory_msgs
+
+cd ~/ros2_nexus_fleet_ws
+colcon build
+source install/setup.bash
+```
+```
+cd ~/ros2_nexus_fleet_ws/src/nexus_controls/nexus_controls
+
+touch drive_arm.py
+touch drive_car_arm.py
+touch drive_car.py
+
+chmod +x drive_arm.py
+chmod +x drive_car_arm.py
+chmod +x drive_car.py
+```
+- Add to console_scripts ```'drive_arm = nexus_controls.drive_arm:main',```
+- Add to console_scripts ```'drive_car_arm = nexus_controls.drive_car_arm:main',```
+- Add to console_scripts ```'drive_car = nexus_controls.drive_car:main',```
+
+# GOAL 8: Auto Pick object
 
 ### STEP 1: Render the object in dock view
 

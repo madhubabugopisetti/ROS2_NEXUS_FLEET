@@ -90,6 +90,33 @@ class AGS(Node):
             self.step = abs(self.step)
         self.send_pose(self.pose, 1.0)
 
+    # ================= ALIGN SHOULDER =================
+    def align_shoulder(self, by, cy):
+        err = by - cy
+        abs_err = abs(err)
+        # Initialize reference
+        if self.prev_abs_err is None:
+            self.prev_abs_err = abs_err
+            return
+        # PD magnitude (always positive)
+        derr = abs_err - self.prev_abs_err
+        u_mag = self.Kp * abs_err + self.Kd * derr
+        u_mag = min(self.max_step, u_mag)
+        # Direction validation
+        if abs_err > self.prev_abs_err:
+            # Error got worse → flip direction
+            self.control_sign *= -1
+        # Apply correction
+        self.pose[0] += self.control_sign * u_mag
+        # Clamp
+        self.pose[0] = max(self.min, min(self.max, self.pose[0]))
+        # Update history
+        self.prev_abs_err = abs_err
+        self.send_pose(self.pose, 1.0)
+
+        self.pose[0] = max(self.min, min(self.max, self.pose[0]))
+        self.send_pose(self.pose, 1.0)
+
     # ================= IMAGE =================
     def image_cb(self, msg):
         if not self.joint_ready:
@@ -131,32 +158,8 @@ class AGS(Node):
             self.prev_err = 0.0
         # ===== ALIGN =====
         if self.mode == ALIGN:
+            self.align_shoulder(by, cy)
 
-            err = by - cy
-            abs_err = abs(err)
-            # Initialize reference
-            if self.prev_abs_err is None:
-                self.prev_abs_err = abs_err
-                return
-            # PD magnitude (always positive)
-            derr = abs_err - self.prev_abs_err
-            u_mag = self.Kp * abs_err + self.Kd * derr
-            u_mag = min(self.max_step, u_mag)
-            # Direction validation
-            if abs_err > self.prev_abs_err:
-                # Error got worse → flip direction
-                self.control_sign *= -1
-            # Apply correction
-            self.pose[0] += self.control_sign * u_mag
-            # Clamp
-            self.pose[0] = max(self.min, min(self.max, self.pose[0]))
-            # Update history
-            self.prev_abs_err = abs_err
-            self.send_pose(self.pose, 1.0)
-
-            
-            self.pose[0] = max(self.min, min(self.max, self.pose[0]))
-            self.send_pose(self.pose, 1.0)
         cv2.imshow("cam", vis)
         cv2.waitKey(1)
 

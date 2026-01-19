@@ -11,7 +11,6 @@ install(
   DIRECTORY
     config
     launch
-    scripts
     rviz
     maps
     urdf

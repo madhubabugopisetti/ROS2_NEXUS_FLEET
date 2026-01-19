@@ -177,7 +177,7 @@ points:
 - Terminal 3: ros2 launch fleet_description navigation.launch.py
 - ![alt text](./src/images/image-12.png)
 
-## GOAL 7: AUTO NAVIGATION - To pickup point
+## GOAL 6: AUTO NAVIGATION - To pickup point
 - Create new package
 ```
 cd ~/ros2_nexus_fleet_ws/src
@@ -202,3 +202,27 @@ chmod +x auto_nav.py
 - Terminal 3: ros2 launch fleet_description navigation.launch.py
 - Terminal 3: ros2 run nexus_car_auto_nav auto_nav
 - ![alt text](./src/images/image-13.png)
+
+# GOAL 7: Auto Pick object
+
+### STEP 1: Render the object in dock view
+
+- Terminal 1: 
+```
+cd ~/ros2_nexus_fleet_ws/src
+ros2 pkg create nexu_arm_auto --build-type ament_python --dependencies rclpy sensor_msgs cv_bridge geometry_msgs trajectory_msgs
+
+cd ~/ros2_nexus_fleet_ws
+colcon build
+source install/setup.bash
+```
+```
+cd ~/ros2_nexus_fleet_ws/src/nexu_arm_auto/nexu_arm_auto
+touch camera_view.py
+chmod +x camera_view.py
+```
+- Add to console_scripts ```'camera_view = nexu_arm_auto.camera_view:main',```
+- [BUILD](#build)
+- ![alt text](./src/images/image-15.png)
+- Terminal 4: ros2 run nexu_arm_auto camera_view
+- ![dock view](./src/images/image-16.png)

@@ -12,7 +12,7 @@ def generate_launch_description():
     pkg_path = get_package_share_directory("fleet_description")
 
     world_file = os.path.join(pkg_path, "worlds", "world.sdf")
-    xacro_file = os.path.join(pkg_path, "urdf", "world.xacro")
+    xacro_file = os.path.join(pkg_path, "urdf", "nexus_fleet.xacro")
     rviz_config = os.path.join(pkg_path, "rviz", "fleet.rviz")
 
     # Start Gazebo Harmonic
@@ -62,9 +62,15 @@ def generate_launch_description():
         cmd=[
             "ros2", "run", "ros_gz_bridge", "parameter_bridge",
             "/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock",
+            '/joint_states@sensor_msgs/msg/JointState@gz.msgs.Model',
+            '/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist',
+            '/odom@nav_msgs/msg/Odometry@gz.msgs.Odometry',
+            '/tf@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V',
+            '/tf_static@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V',
             '/scan@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
             '/camera/image@sensor_msgs/msg/Image@gz.msgs.Image',
-            '/camera/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo'
+            '/arm_camera/image@sensor_msgs/msg/Image@gz.msgs.Image',
+            '/base_camera/image@sensor_msgs/msg/Image@gz.msgs.Image',
         ],
         output="screen"
     )

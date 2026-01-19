@@ -11,6 +11,7 @@ install(
   DIRECTORY
     config
     launch
+    scripts
     rviz
     urdf
     worlds

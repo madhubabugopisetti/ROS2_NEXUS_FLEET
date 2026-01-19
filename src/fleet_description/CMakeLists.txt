@@ -13,6 +13,7 @@ install(
     launch
     scripts
     rviz
+    maps
     urdf
     worlds
   DESTINATION share/${PROJECT_NAME}

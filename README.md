@@ -158,3 +158,12 @@ points:
 - Terminal 4: ros2 run teleop_twist_keyboard teleop_twist_keyboard
 - ![alt text](./src/images/image-10.png)
 - Terminal 5: ros2 run nav2_map_server map_saver_cli -f ~/ros2_nexus_fleet_ws/src/fleet_description/maps/my_map
+
+## GOAL 4: Localization (auto load saved map)
+- Create localization.launch.py file in launch and amcl.yaml in config
+- Add Map Server → loads your saved map, AMCL → localizes robot in that map, Lifecycle Manager → automatically starts them
+- [BUILD](#build)
+- Terminal 1: ros2 launch fleet_description gazebo_rviz.launch.py
+- Terminal 2: ros2 launch fleet_description localization.launch.py
+- Fixed Fram -> map
+- ![alt text](./src/images/image-11.png)

@@ -167,3 +167,12 @@ points:
 - Terminal 2: ros2 launch fleet_description localization.launch.py
 - Fixed Fram -> map
 - ![alt text](./src/images/image-11.png)
+
+## GOAL 5: Navigation - Goal Point click
+- Create navigation.launch.py file in launch and nav2.yaml in config
+- Add Planner → makes a path, Controller → follows the path, Behavior tree → orchestrates navigation, Recovery behaviors → unstuck logic, Velocity smoother → smooth motion, Lifecycle manager → auto-starts everything
+- [BUILD](#build)
+- Terminal 1: ros2 launch fleet_description gazebo_rviz.launch.py
+- Terminal 2: ros2 launch fleet_description localization.launch.py
+- Terminal 3: ros2 launch fleet_description navigation.launch.py
+- ![alt text](./src/images/image-12.png)

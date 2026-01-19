@@ -176,3 +176,29 @@ points:
 - Terminal 2: ros2 launch fleet_description localization.launch.py
 - Terminal 3: ros2 launch fleet_description navigation.launch.py
 - ![alt text](./src/images/image-12.png)
+
+## GOAL 7: AUTO NAVIGATION - To pickup point
+- Create new package
+```
+cd ~/ros2_nexus_fleet_ws/src
+source /opt/ros/jazzy/setup.bash
+ros2 pkg create nexus_car_auto_nav --build-type ament_python --dependencies rclpy nav2_msgs geometry_msgs
+```
+```
+cd ~/ros2_nexus_fleet_ws
+colcon build --symlink-install
+source install/setup.bash
+```
+- Create a node file
+```
+cd ~/ros2_nexus_fleet_ws/src/nexus_car_auto_nav/nexus_car_auto_nav
+touch auto_nav.py
+chmod +x auto_nav.py
+```
+- Add it to **entry_points** ```'auto_nav = nexus_car_auto_nav.auto_nav:main',```
+- [BUILD](#build)
+- Terminal 1: ros2 launch fleet_description gazebo_rviz.launch.py
+- Terminal 2: ros2 launch fleet_description localization.launch.py
+- Terminal 3: ros2 launch fleet_description navigation.launch.py
+- Terminal 3: ros2 run nexus_car_auto_nav auto_nav
+- ![alt text](./src/images/image-13.png)

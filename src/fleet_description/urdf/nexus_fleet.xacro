@@ -340,7 +340,7 @@
         <child link="left_finger" />
         <origin xyz="0 0.012 0.05" />
         <axis xyz="0 1 0" />
-        <limit lower="0" upper="0.025" effort="100" velocity="0.2" />
+        <limit lower="0" upper="3" effort="300" velocity="0.2" />
     </joint>
 
     <link name="left_finger">
@@ -368,7 +368,7 @@
         <child link="right_finger" />
         <origin xyz="0 -0.012 0.05" />
         <axis xyz="0 -1 0" />
-        <limit lower="0" upper="0.025" effort="100" velocity="0.2" />
+        <limit lower="0" upper="3" effort="300" velocity="0.2" />
     </joint>
 
     <link name="right_finger">

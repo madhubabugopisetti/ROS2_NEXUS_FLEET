@@ -20,19 +20,27 @@ JOINTS = [
 
 SCAN   = 0
 ALIGN  = 1
+ALIGN_WRIST = 2
+ALIGN_FOREARM = 3
 
 class AGS(Node):
     def __init__(self):
         super().__init__("ags")
+        self.deadzone_b = 2.0
         self.prev_abs_err = None
         self.control_sign = 1.0
+        self.Kp_b = 0.003
+        self.Kd_b = 0.001
+        self.prev_err_b = None
+        self.max_step_b = 0.01
+
         # ===== MODE =====
         self.mode = SCAN
         # ===== SCAN PARAMS =====
         self.step = 0.1
         self.slow_step = 0.02
-        self.max = 3.14
-        self.min = -3.14
+        self.max = float("inf")
+        self.min = -float("inf")
         # ===== ALIGN (PD) PARAMS =====
         self.Kp = 0.0012
         self.Kd = 0.0010
@@ -54,7 +62,7 @@ class AGS(Node):
             JointState, "/joint_states", self.joint_cb, 10
         )
         self.bridge = CvBridge()
-        self.pose = [0.0, 1.0, 1.5, 0.55, 0.0, 0.01, 0.01]
+        self.pose = [1.0, 1.0, 1.0, 1.0, 0.0, 0.01, 0.01]
         self.shoulder = 0.0
         self.joint_ready = False
         self.send_pose(self.pose, 2.0)
@@ -84,37 +92,41 @@ class AGS(Node):
             return
         step = self.slow_step if self.box_found else self.step
         self.pose[0] += step
-        if self.pose[0] >= self.max:
-            self.step = -abs(self.step)
-        elif self.pose[0] <= self.min:
-            self.step = abs(self.step)
+        self.send_pose(self.pose, 1.0)
+
+    def align_forearm(self):
+        pass
+    def align_wrist_roll(self, contour):
+        rect = cv2.minAreaRect(contour)
+        angle = rect[2]
+        if angle < -45:
+            angle += 90
+        err_theta = abs(angle)  # target is 90°
+        if err_theta >= 80:
+            self.mode = ALIGN_FOREARM
+            return
+        step = 0.002
+        if err_theta > 0:
+            self.pose[4] -= step
+        else:
+            self.pose[4] += step
         self.send_pose(self.pose, 1.0)
 
     # ================= ALIGN SHOULDER =================
     def align_shoulder(self, by, cy):
         err = by - cy
         abs_err = abs(err)
-        # Initialize reference
         if self.prev_abs_err is None:
             self.prev_abs_err = abs_err
             return
-        # PD magnitude (always positive)
         derr = abs_err - self.prev_abs_err
         u_mag = self.Kp * abs_err + self.Kd * derr
         u_mag = min(self.max_step, u_mag)
-        # Direction validation
         if abs_err > self.prev_abs_err:
-            # Error got worse → flip direction
             self.control_sign *= -1
-        # Apply correction
         self.pose[0] += self.control_sign * u_mag
-        # Clamp
-        self.pose[0] = max(self.min, min(self.max, self.pose[0]))
-        # Update history
         self.prev_abs_err = abs_err
         self.send_pose(self.pose, 1.0)
-
-        self.pose[0] = max(self.min, min(self.max, self.pose[0]))
         self.send_pose(self.pose, 1.0)
 
     # ================= IMAGE =================
@@ -125,7 +137,6 @@ class AGS(Node):
         vis = img.copy()
         h, w, _ = img.shape
         cx, cy = w // 2, h // 2
-        # axes
         cv2.line(vis, (0, cy), (w, cy), (0, 0, 255), 1)
         cv2.line(vis, (cx, 0), (cx, h), (0, 255, 0), 1)
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -147,18 +158,33 @@ class AGS(Node):
         by = y + hc//2
         err_x = bx - cx
         err_y = by - cy
-        cv2.putText( vis, f"err_x={err_x}  err_y={err_y}", (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+        rect = cv2.minAreaRect(c)
+        angle = rect[2]
+        if angle < -45:
+            angle += 90
+        err_b = angle
+        cv2.putText(vis, f"err_x={err_x} err_y={err_y} err_b={err_b:.1f}", (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+
         cv2.rectangle(vis,(x,y),(x+wc,y+hc),(0,255,0),2)
         cv2.circle(vis,(bx,by),4,(0,255,0),-1)
         self.box_found = True
         self.stable_count += 1
+
         # ===== MODE SWITCH =====
         if self.mode == SCAN and self.stable_count >= self.STABLE_REQ:
             self.mode = ALIGN
             self.prev_err = 0.0
+            self.prev_abs_err = None
         # ===== ALIGN =====
         if self.mode == ALIGN:
-            self.align_shoulder(by, cy)
+            if abs(by - cy) <= self.deadzone:
+                self.mode = ALIGN_WRIST   # freeze shoulder here
+            else:
+                self.align_shoulder(by, cy)
+        if self.mode == ALIGN_WRIST:
+            self.align_wrist_roll(c)
+        if self.mode == ALIGN_FOREARM:
+            self.align_forearm()
 
         cv2.imshow("cam", vis)
         cv2.waitKey(1)

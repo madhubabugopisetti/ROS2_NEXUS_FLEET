@@ -266,3 +266,8 @@ chmod +x search_align_shoulder.py
 - ![alt text](./src/images/image-17.png)
 - ![alt text](./src/images/image-19.png)
 - ![alt text](./src/images/image-18.png)
+
+### STEP 3: Align wrist_roll
+- Changed pick up object place
+- Added wrist roll condition without PID
+- ![alt text](./src/images/image-20.png)

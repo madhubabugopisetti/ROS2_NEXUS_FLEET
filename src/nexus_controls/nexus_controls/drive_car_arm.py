@@ -39,26 +39,26 @@ class KeyboardTeleop(Node):
         self.joint_pos = [0.0] * 7
 
         self.get_logger().info("""
-================ TELEOP =================
+            ================ TELEOP =================
 
-BASE:
-  w : forward
-  s : backward
-  a : turn left
-  d : turn right
-  x : stop
-  q : quit
+            BASE:
+            i : forward
+            k : backward
+            u : turn left
+            o : turn right
+            j : stop
+            q : quit
 
-ARM:
-  e / c : shoulder + / -
-  r / f : elbow + / -
-  t / g : forearm + / -
-  y / h : wrist pitch + / -
-  u / j : wrist roll + / -
-  o / p : gripper open / close
+            ARM:
+            s / S : shoulder + / -
+            e / E : elbow + / -
+            f / F : forearm + / -
+            p / P : wrist pitch + / -
+            r / R : wrist roll + / -
+            O / C : gripper open / close
 
-========================================
-""")
+            ========================================
+            """)
 
     def publish_base(self, lin, ang):
         msg = Twist()
@@ -88,47 +88,47 @@ ARM:
                 key = sys.stdin.read(1)
 
                 # ========== BASE ==========
-                if key == 'w':
+                if key == 'i':
                     self.publish_base(self.linear_speed, 0.0)
-                elif key == 's':
+                elif key == 'k':
                     self.publish_base(-self.linear_speed, 0.0)
-                elif key == 'a':
+                elif key == 'u':
                     self.publish_base(self.creep, self.angular_speed)
-                elif key == 'd':
+                elif key == 'o':
                     self.publish_base(self.creep, -self.angular_speed)
-                elif key == 'x':
+                elif key == 'j':
                     self.publish_base(0.0, 0.0)
 
                 # ========== ARM ==========
-                elif key == 'e':   # shoulder +
+                elif key == 's':   # shoulder +
                     self.joint_pos[0] += self.step
-                elif key == 'c':   # shoulder -
+                elif key == 'S':   # shoulder -
                     self.joint_pos[0] -= self.step
 
-                elif key == 'r':   # elbow +
+                elif key == 'e':   # elbow +
                     self.joint_pos[1] += self.step
-                elif key == 'f':   # elbow -
+                elif key == 'E':   # elbow -
                     self.joint_pos[1] -= self.step
 
-                elif key == 't':   # forearm +
+                elif key == 'f':   # forearm +
                     self.joint_pos[2] += self.step
-                elif key == 'g':   # forearm -
+                elif key == 'F':   # forearm -
                     self.joint_pos[2] -= self.step
 
-                elif key == 'y':   # wrist pitch +
+                elif key == 'p':   # wrist pitch +
                     self.joint_pos[3] += self.step
-                elif key == 'h':   # wrist pitch -
+                elif key == 'P':   # wrist pitch -
                     self.joint_pos[3] -= self.step
 
-                elif key == 'u':   # wrist roll +
+                elif key == 'r':   # wrist roll +
                     self.joint_pos[4] += self.step
-                elif key == 'j':   # wrist roll -
+                elif key == 'R':   # wrist roll -
                     self.joint_pos[4] -= self.step
 
-                elif key == 'o':   # open gripper
+                elif key == 'O':   # open gripper
                     self.joint_pos[5] += self.gripper_step
                     self.joint_pos[6] += self.gripper_step
-                elif key == 'p':   # close gripper
+                elif key == 'C':   # close gripper
                     self.joint_pos[5] -= self.gripper_step
                     self.joint_pos[6] -= self.gripper_step
 

@@ -304,7 +304,7 @@ We are going to find the box first. How?
 center of box to center of width of opencvwindow
 ```
 - We use P from PID, we change direction if error get bigger, if error get smaller, we change speed of it
-- ![alt text](/src/images/image-22.png)
+- ![alt text](./src/images/image-22.png)
 
 ### STEP 7: Align Y - AXIS
 - Find err_x from **cy - (h // 2)**
@@ -312,4 +312,10 @@ center of box to center of width of opencvwindow
 center of box to center of height of opencvwindow
 ```
 - We use P from PID, we change direction if error get bigger, if error get smaller, we change speed of it
-- ![alt text](/src/images/image-23.png)
+- ![alt text](./src/images/image-23.png)
+
+### STEP 8: Align X Y Z - AXIS
+- write a align_elbox_zaxis func for aligning all axis
+- We move elbow in same direction, till red box again goes into gap_between
+- Then we stop and align X Y axis
+- ![alt text](./src/images/image-24.png)

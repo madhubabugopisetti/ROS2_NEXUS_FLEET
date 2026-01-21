@@ -57,7 +57,7 @@ class AutoPickBox(Node):
         self.shoulder_max = 3.14
         self.shoulder_dir = 1
         #
-        
+
         # wrist roll scan variables
         self.wrist_step = 0.01
         self.wrist_min = -3.14
@@ -68,6 +68,17 @@ class AutoPickBox(Node):
         self.err_r = 0
         self.err_x = 0
         self.err_y = 0
+
+        self.arm_fixed = False
+
+        # elbow roll scan variables
+        self.elbow_step = 0.001
+        self.elbow_min = -1.57
+        self.elbow_max = 1.57
+        self.elbow_dir = 1
+        self.red_in_padding = False
+        self.red_is_missing = False
+        #
 
         self.timer = self.create_timer(0.1, self.callFunctions)
 
@@ -99,11 +110,18 @@ class AutoPickBox(Node):
             cv2.inRange(hsv, (0,120,70), (10,255,255)) |
             cv2.inRange(hsv, (170,120,70), (180,255,255))
         )
+        inner = red_mask[P:h-P, P:w-P]
+        red_inside_window = cv2.countNonZero(inner) > 0
+        self.red_is_missing = not red_inside_window
         top_strip = red_mask[:P, :]
         bottom_strip = red_mask[h-P:, :]
         red_top = cv2.countNonZero(top_strip) > 0
         red_bottom = cv2.countNonZero(bottom_strip) > 0
         red_on_y = red_top or red_bottom
+        if red_on_y:
+            self.red_in_padding = True
+        else:
+            self.red_in_padding = False
         if self.step == 2:
             if red_on_y:
                 if not self.box_entered:
@@ -161,6 +179,12 @@ class AutoPickBox(Node):
         self.current_pose = pose
         self.get_logger().info(f"{action} gripper={pose}")
 
+    def should_stop_elbow(self):
+        if self.red_in_padding:
+            self.get_logger().warn("Red entered padding → STOPPING ELBOW")
+            return True
+        return False
+
     def callFunctions(self):
         match self.step:
             case 0:
@@ -175,6 +199,8 @@ class AutoPickBox(Node):
                 self.align_shoulder_yaxis()
             case 5:
                 self.align_forearm_xaxis()
+            case 6:
+                self.align_elbox_zaxis()
             case _:
                 pass
 
@@ -239,6 +265,36 @@ class AutoPickBox(Node):
         pose[2] -= delta
         self.send_pose(pose, 0.0001)
         self.current_pose = pose
+
+    def align_elbox_zaxis(self):
+        pose = self.current_pose.copy()
+        if abs(pose[1]) >= 1.2:
+            self.get_logger().info(f"Elbow reached target limit: {pose[1]:.3f} → STOP")
+            self.arm_fixed = True
+            time.sleep(2)
+            self.step = 4
+            return
+        if self.should_stop_elbow():
+            self.step = 4
+            return
+        if self.red_is_missing:
+            self.get_logger().warn("Red missing inside green window → STOP ELBOW")
+            self.arm_fixed = True
+            time.sleep(1)
+            self.step = 7
+            return
+        if abs(self.err_x) > 2.0:
+            Kp_x = 0.0001
+            delta_x = Kp_x * self.err_x
+            pose[2] -= delta_x
+            self.get_logger().info(f"[ELBOW PHASE] forearm corr: {delta_x:.6f}")
+        if pose[1] >= self.elbow_max or pose[1] <= self.elbow_min:
+            self.elbow_dir *= -1
+        pose[1] += self.elbow_dir * self.elbow_step
+        self.get_logger().info(f"[ELBOW PHASE] elbow={pose[1]:.4f}")
+        self.send_pose(pose, 0.02)
+        self.current_pose = pose
+
 def main():
     rclpy.init()
     node = AutoPickBox()

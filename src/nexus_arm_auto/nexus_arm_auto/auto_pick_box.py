@@ -66,6 +66,8 @@ class AutoPickBox(Node):
         #
 
         self.err_r = 0
+        self.err_x = 0
+        self.err_y = 0
 
         self.timer = self.create_timer(0.1, self.callFunctions)
 
@@ -132,8 +134,10 @@ class AutoPickBox(Node):
                 cv2.drawContours(frame, [box], 0, (0, 255, 0), 2)
                 cx = int(rect[0][0])
                 cy = int(rect[0][1])
+                self.err_x = cy - (h // 2)
+                self.err_y = cx - (w // 2)
                 self.err_r = angle
-                cv2.putText(frame, f"err_r(deg): {self.err_r:.1f}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
+                cv2.putText(frame, f"err_x: {self.err_x} err_y: {self.err_y}  err_r(deg): {self.err_r:.1f}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
                 cv2.line(frame, (cx, cy), (w // 2, cy), (255, 0, 0), 2)
                 cv2.line(frame, (cx, cy), (cx, h // 2), (255, 0, 0), 2)
 
@@ -167,6 +171,10 @@ class AutoPickBox(Node):
                 self.find_box()
             case 3:
                 self.align_wrist_gripper()
+            case 4:
+                self.align_shoulder_yaxis()
+            case 5:
+                self.align_forearm_xaxis()
             case _:
                 pass
 
@@ -206,6 +214,31 @@ class AutoPickBox(Node):
         self.send_pose(pose, 0.01)
         self.current_pose = pose
 
+    def align_shoulder_yaxis(self):
+        if abs(self.err_y) <= 2.0:
+            self.get_logger().info("shoulder aligned → now forearm")
+            self.step = 5
+            return
+        Kp = 0.0001
+        delta = Kp * self.err_y
+        self.get_logger().info(f"err_y={self.err_y} delta={delta}")
+        pose = self.current_pose.copy()
+        pose[0] += delta
+        self.send_pose(pose, 0.0001)
+        self.current_pose = pose
+
+    def align_forearm_xaxis(self):
+        if abs(self.err_x) <= 2.0:
+            self.get_logger().info("forearm aligned → now elbow")
+            self.step = 6
+            return
+        Kp = 0.0001
+        delta = Kp * self.err_x
+        self.get_logger().info(f"err_x={self.err_x} delta={delta}")
+        pose = self.current_pose.copy()
+        pose[2] -= delta
+        self.send_pose(pose, 0.0001)
+        self.current_pose = pose
 def main():
     rclpy.init()
     node = AutoPickBox()

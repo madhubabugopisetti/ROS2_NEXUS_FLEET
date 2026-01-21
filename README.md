@@ -297,3 +297,19 @@ We are going to find the box first. How?
 - Form a green border around box, remove border lines, and put co-ordinate axis - **X - Y Lines**
 - To align wrist, we use err_r, we use angle diff from cv2 contours
 - ![alt text](./src/images/image-21.png)
+
+### STEP 6: Align X - AXIS
+- Find err_y from **cx - (w // 2)**
+```
+center of box to center of width of opencvwindow
+```
+- We use P from PID, we change direction if error get bigger, if error get smaller, we change speed of it
+- ![alt text](/src/images/image-22.png)
+
+### STEP 7: Align Y - AXIS
+- Find err_x from **cy - (h // 2)**
+```
+center of box to center of height of opencvwindow
+```
+- We use P from PID, we change direction if error get bigger, if error get smaller, we change speed of it
+- ![alt text](/src/images/image-23.png)

@@ -227,6 +227,9 @@ chmod +x drive_car.py
 - Add to console_scripts ```'drive_arm = nexus_controls.drive_arm:main',```
 - Add to console_scripts ```'drive_car_arm = nexus_controls.drive_car_arm:main',```
 - Add to console_scripts ```'drive_car = nexus_controls.drive_car:main',```
+- ros2 run nexus_controls drive_arm
+- ros2 run nexus_controls drive_car_arm
+- ros2 run nexus_controls drive_car
 
 # GOAL 8: Auto Pick object
 

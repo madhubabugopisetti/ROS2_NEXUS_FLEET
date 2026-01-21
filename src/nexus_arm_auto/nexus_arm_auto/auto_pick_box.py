@@ -7,6 +7,11 @@ from sensor_msgs.msg import Image, JointState
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from cv_bridge import CvBridge
 import time
+from nav_msgs.msg import Odometry
+from tf_transformations import euler_from_quaternion
+from geometry_msgs.msg import Twist
+import math
+
 
 JOINTS = [
     "shoulder_joint",
@@ -45,7 +50,15 @@ class AutoPickBox(Node):
             10
         )
 
-        self.step = 0
+        self.create_subscription(
+            Odometry,
+            "/odom",
+            self.odom_cb,
+            10
+        )
+        self.cmd_pub = self.create_publisher(Twist, "/cmd_vel", 10)
+
+        self.step = -1
         self.current_pose = [0.0] * 7
 
         self.box_entered = False
@@ -79,8 +92,23 @@ class AutoPickBox(Node):
         self.red_in_padding = False
         self.red_is_missing = False
         #
+        self.turn_target = None
+
+        self.robot_x = 0.0
+        self.robot_y = 0.0
+        self.robot_yaw = 0.0
+
+        self.goal_x = 3.7
+        self.goal_y = 0.0
 
         self.timer = self.create_timer(0.1, self.callFunctions)
+
+    def odom_cb(self, msg):
+        self.robot_x = msg.pose.pose.position.x
+        self.robot_y = msg.pose.pose.position.y
+        q = msg.pose.pose.orientation
+        (_, _, yaw) = euler_from_quaternion([q.x, q.y, q.z, q.w])
+        self.robot_yaw = yaw
 
     def joint_cb(self, msg):
         self.joint_state = dict(zip(msg.name, msg.position))
@@ -178,6 +206,8 @@ class AutoPickBox(Node):
         self.send_pose(pose, 0.001)
         self.current_pose = pose
         self.get_logger().info(f"{action} gripper={pose}")
+        time.sleep(2)
+        self.step = 8
 
     def should_stop_elbow(self):
         if self.red_in_padding:
@@ -187,6 +217,8 @@ class AutoPickBox(Node):
 
     def callFunctions(self):
         match self.step:
+            case -1:
+                self.auto_nav()
             case 0:
                 self.default_pose()
             case 1:
@@ -205,8 +237,27 @@ class AutoPickBox(Node):
                 self.positioning()
             case 8:
                 self.pickup_box()
+            case 9:
+                self.rotate_towards_center()
             case _:
                 pass
+
+    def auto_nav(self):
+        dx = self.goal_x - self.robot_x
+        dy = self.goal_y - self.robot_y
+        dist = math.sqrt(dx*dx + dy*dy)
+        cmd = Twist()
+        if dist > 0.05:
+            cmd.linear.x = 0.3
+            cmd.angular.z = 0.0
+            self.cmd_pub.publish(cmd)
+            self.get_logger().info(f"[STEP -1] Moving... dist={dist:.3f}")
+        else:
+            cmd.linear.x = 0.0
+            cmd.angular.z = 0.0
+            self.cmd_pub.publish(cmd)
+            self.get_logger().info("[STEP -1] Reached goal. STOP.")
+            self.step = 0
 
     def default_pose(self):
         self.get_logger().info("Set Default Pose")
@@ -323,6 +374,7 @@ class AutoPickBox(Node):
         self.current_pose = pose
         time.sleep(6)
         self.step = 9
+
 def main():
     rclpy.init()
     node = AutoPickBox()

@@ -203,6 +203,8 @@ class AutoPickBox(Node):
                 self.align_elbox_zaxis()
             case 7:
                 self.positioning()
+            case 8:
+                self.pickup_box()
             case _:
                 pass
 
@@ -313,6 +315,14 @@ class AutoPickBox(Node):
         time.sleep(10)
         self.handleGrippers("close")
 
+    def pickup_box(self):
+        self.get_logger().info("lifting")
+        pose = self.current_pose.copy()
+        pose[1] = 0
+        self.send_pose(pose, 5)
+        self.current_pose = pose
+        time.sleep(6)
+        self.step = 9
 def main():
     rclpy.init()
     node = AutoPickBox()

@@ -320,9 +320,14 @@ center of box to center of height of opencvwindow
 - Then we stop
 - ![alt text](./src/images/image-24.png)
 
-### STEP 8: Positioning - Align X Y Z axis
+### STEP 9: Positioning - Align X Y Z axis
 - Now we move elbow + forarm
 - Elbow moves in same direction and forearm in opposite direction
 - ![alt text](./src/images/image-25.png)
 - We call gripper to hold
 - ![alt text](./src/images/image-26.png)
+
+### STEP 10: PICK UP
+- ![alt text](./src/images/image-27.png)
+- ![alt text](./src/images/image-28.png)
+- ![alt text](./src/images/image-29.png)

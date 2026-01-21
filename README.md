@@ -200,7 +200,7 @@ chmod +x auto_nav.py
 - Terminal 1: ros2 launch fleet_description gazebo_rviz.launch.py
 - Terminal 2: ros2 launch fleet_description localization.launch.py
 - Terminal 3: ros2 launch fleet_description navigation.launch.py
-- Terminal 3: ros2 run nexus_car_auto_nav auto_nav
+- Terminal 4: ros2 run nexus_car_auto_nav auto_nav
 - ![alt text](./src/images/image-13.png)
 
 # GOAL 7: Move Scripts folder to new package
@@ -235,39 +235,20 @@ chmod +x drive_car.py
 - Terminal 1: 
 ```
 cd ~/ros2_nexus_fleet_ws/src
-ros2 pkg create nexu_arm_auto --build-type ament_python --dependencies rclpy sensor_msgs cv_bridge geometry_msgs trajectory_msgs
+ros2 pkg create nexus_arm_auto --build-type ament_python --dependencies rclpy sensor_msgs cv_bridge geometry_msgs trajectory_msgs
 
 cd ~/ros2_nexus_fleet_ws
 colcon build
 source install/setup.bash
 ```
 ```
-cd ~/ros2_nexus_fleet_ws/src/nexu_arm_auto/nexu_arm_auto
+cd ~/ros2_nexus_fleet_ws/src/nexus_arm_auto/nexus_arm_auto
 touch camera_view.py
 chmod +x camera_view.py
 ```
-- Add to console_scripts ```'camera_view = nexu_arm_auto.camera_view:main',```
-- [BUILD](#build)
+- Add to console_scripts ```'camera_view = nexus_arm_auto.camera_view:main',```
+- ![alt text](./src/images/image-14.png)
+- Terminal 4: ros2 run nexus_car_auto_nav auto_nav
 - ![alt text](./src/images/image-15.png)
-- Terminal 4: ros2 run nexu_arm_auto camera_view
-- ![dock view](./src/images/image-16.png)
-
-### STEP 2: Search box and Align Y-AXIS with PID
-```
-cd ~/ros2_nexus_fleet_ws/src/nexu_arm_auto/nexu_arm_auto
-touch search_align_shoulder.py
-chmod +x search_align_shoulder.py
-```
-- Add to console_scripts ```'search_align_shoulder = nexu_arm_auto.search_align_shoulder:main',```
-- [BUILD](#build)
+- Terminal 5: ros2 run nexus_arm_auto camera_view
 - ![alt text](./src/images/image-16.png)
-- Terminal 5: ros2 run nexu_arm_auto search_align_shoulder
-- ![dock view](./src/images/image-16.png)
-- ![alt text](./src/images/image-17.png)
-- ![alt text](./src/images/image-19.png)
-- ![alt text](./src/images/image-18.png)
-
-### STEP 3: Align wrist_roll
-- Changed pick up object place
-- Added wrist roll condition without PID
-- ![alt text](./src/images/image-20.png)

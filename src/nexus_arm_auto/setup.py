@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'nexu_arm_auto'
+package_name = 'nexus_arm_auto'
 
 setup(
     name=package_name,
@@ -24,8 +24,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'camera_view = nexu_arm_auto.camera_view:main',
-            'search_align_shoulder = nexu_arm_auto.search_align_shoulder:main',
+            'camera_view = nexus_arm_auto.camera_view:main',
+            'search_align_shoulder = nexus_arm_auto.search_align_shoulder:main',
         ],
     },
 )

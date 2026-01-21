@@ -296,7 +296,7 @@
         </model>
         <model name="cylinder_object_2">
             <static>true</static>
-            <pose>3.5 0.5 0.1 0 0 0</pose>
+            <pose>3.5 0.65 0.1 0 0 0</pose>
             <link name="link">
                 <collision name="collision">
                     <geometry>
@@ -320,13 +320,13 @@
             </link>
         </model>
         <model name="target_box">
-            <static>true</static>
-            <pose>3.5 0.5 0.25 0 0 0</pose>
+            <static>false</static>
+            <pose>3.5 0.65 0.25 0 0 0</pose>
             <link name="link">
                 <visual name="visual">
                     <geometry>
                         <box>
-                            <size>0.1 0.1 0.1</size>
+                            <size>0.05 0.1 0.1</size>
                         </box>
                     </geometry>
                     <material>
@@ -337,7 +337,7 @@
                 <collision name="collision">
                     <geometry>
                         <box>
-                            <size>0.1 0.1 0.1</size>
+                            <size>0.05 0.1 0.1</size>
                         </box>
                     </geometry>
                 </collision>

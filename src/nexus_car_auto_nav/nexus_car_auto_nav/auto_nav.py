@@ -58,7 +58,7 @@ class AutoNav(Node):
         goal.pose.header.frame_id = "map"
         goal.pose.header.stamp = self.get_clock().now().to_msg()
 
-        goal.pose.pose.position.x = 3.4
+        goal.pose.pose.position.x = 3.7
         goal.pose.pose.position.y = 0.0
 
         q = quaternion_from_euler(0, 0, 0)

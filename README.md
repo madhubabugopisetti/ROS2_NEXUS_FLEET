@@ -273,3 +273,19 @@ chmod +x auto_pick_box.py
 - Create a common function to send poses
 - Terminal 4: ros2 run nexus_arm_auto auto_pick_box
 - ![alt text](./src/images/image-17.png)
+
+### STEP 4: Find Box
+```
+We are going to find the box first. How?
+1. While rotating, search for object, it will enter
+2. We need to know that is inside the window, so - inside opencvwindow, we will put another window
+3. There will be gap between inner and outerwindow, this will be our loop hole
+4. First it enters that gap - box_entered, then while rotating - box exits the gap - now box is inside the opencvwindow
+```
+- Pre defined points on ground
+- ![alt text](./src/images/image-18.png)
+- In OpenCV Window draw a rectangle with text **X -X Y -Y**
+- Rotate only shoulder using max and min **3.14, -3.14**, with step **0.1**, direction 1(this will change when it reaches max or min)
+- ![alt text](./src/images/image-19.png)
+- Terminal 4: ros2 run nexus_arm_auto auto_pick_box
+- ![alt text](./src/images/image-20.png)

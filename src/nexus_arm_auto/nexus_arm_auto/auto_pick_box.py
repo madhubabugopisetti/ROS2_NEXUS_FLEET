@@ -48,6 +48,16 @@ class AutoPickBox(Node):
         self.step = 0
         self.current_pose = [0.0] * 7
 
+        self.box_entered = False
+        self.gap_between = 15
+
+        # shoulder scan variables
+        self.shoulder_step = 0.01
+        self.shoulder_min = -3.14
+        self.shoulder_max = 3.14
+        self.shoulder_dir = 1
+        #
+
         self.timer = self.create_timer(0.1, self.callFunctions)
 
     def joint_cb(self, msg):
@@ -55,9 +65,41 @@ class AutoPickBox(Node):
 
     def image_cb(self, msg):
         frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+        h, w, _ = frame.shape
+        P = self.gap_between
+        self.align_box_in_window(frame, P, h, w)
         cv2.imshow("arm_camera", frame)
         cv2.waitKey(1)
-    
+
+    def align_box_in_window(self, frame, P, h, w):
+        cv2.rectangle(frame, (P, P), (w - P, h - P), (0, 255, 0), 2)
+        cv2.putText(frame, "-X", (5, h // 2),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+        cv2.putText(frame, "+X", (w - 40, h // 2),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+        cv2.putText(frame, "-Y", (w // 2 - 20, 20),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+        cv2.putText(frame, "+Y", (w // 2 - 20, h - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        red_mask = (
+            cv2.inRange(hsv, (0,120,70), (10,255,255)) |
+            cv2.inRange(hsv, (170,120,70), (180,255,255))
+        )
+        top_strip = red_mask[:P, :]
+        bottom_strip = red_mask[h-P:, :]
+        red_top = cv2.countNonZero(top_strip) > 0
+        red_bottom = cv2.countNonZero(bottom_strip) > 0
+        red_on_y = red_top or red_bottom
+        if self.step == 2:
+            if red_on_y:
+                if not self.box_entered:
+                    self.get_logger().info("[STEP 3] Red ENTERED Y padding")
+                self.box_entered = True
+            elif self.box_entered and not red_on_y:
+                self.get_logger().info("[STEP 3] Red EXITED Y padding → STEP 4")
+                self.step = 3
+
     def send_pose(self, pose, t):
         traj = JointTrajectory()
         traj.joint_names = JOINTS
@@ -74,6 +116,10 @@ class AutoPickBox(Node):
         match self.step:
             case 0:
                 self.default_pose()
+            case 1:
+                self.search_pose()
+            case 2:
+                self.find_box()
             case _:
                 pass
 
@@ -82,6 +128,23 @@ class AutoPickBox(Node):
         self.send_pose(self.current_pose, 5)
         time.sleep(6)
         self.step = 1
+
+    def search_pose(self):
+        self.get_logger().info("set search pose")
+        pose = self.current_pose.copy()
+        pose[1:7] = [1.0, 1.0, 1.0, 0.1, 0.0, 0.0]
+        self.send_pose(pose, 5)
+        self.current_pose = pose
+        time.sleep(6)
+        self.step = 2
+
+    def find_box(self):
+        pose = self.current_pose.copy()
+        if pose[0] >= self.shoulder_max or pose[0] <= self.shoulder_min:
+            self.shoulder_dir *= -1
+        pose[0] += self.shoulder_dir * self.shoulder_step
+        self.send_pose(pose, 0.1)
+        self.current_pose = pose
 
 def main():
     rclpy.init()

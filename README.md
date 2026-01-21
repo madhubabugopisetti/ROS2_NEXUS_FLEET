@@ -289,3 +289,11 @@ We are going to find the box first. How?
 - ![alt text](./src/images/image-19.png)
 - Terminal 4: ros2 run nexus_arm_auto auto_pick_box
 - ![alt text](./src/images/image-20.png)
+
+### STEP 5: Align Wrist
+- write a align_wrist_roll_rotate func for rotating wrist
+- Write a open_grippers func to open grippers
+- Define wrist, fingers params, (max, min, step, direction)
+- Form a green border around box, remove border lines, and put co-ordinate axis - **X - Y Lines**
+- To align wrist, we use err_r, we use angle diff from cv2 contours
+- ![alt text](./src/images/image-21.png)

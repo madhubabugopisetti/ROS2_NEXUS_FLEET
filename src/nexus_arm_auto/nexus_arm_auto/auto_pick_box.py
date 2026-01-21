@@ -57,6 +57,15 @@ class AutoPickBox(Node):
         self.shoulder_max = 3.14
         self.shoulder_dir = 1
         #
+        
+        # wrist roll scan variables
+        self.wrist_step = 0.01
+        self.wrist_min = -3.14
+        self.wrist_max = 3.14
+        self.wrist_dir = 1
+        #
+
+        self.err_r = 0
 
         self.timer = self.create_timer(0.1, self.callFunctions)
 
@@ -68,6 +77,8 @@ class AutoPickBox(Node):
         h, w, _ = frame.shape
         P = self.gap_between
         self.align_box_in_window(frame, P, h, w)
+        if self.step !=1 or self.step != 1 or self.step !=2:
+            self.show_lines_in_CV(frame, P, h, w)
         cv2.imshow("arm_camera", frame)
         cv2.waitKey(1)
 
@@ -100,6 +111,32 @@ class AutoPickBox(Node):
                 self.get_logger().info("[STEP 3] Red EXITED Y padding → STEP 4")
                 self.step = 3
 
+    def show_lines_in_CV(self, frame, P, h, w):
+        vis = frame.copy()
+        hsv = cv2.cvtColor(vis, cv2.COLOR_BGR2HSV)
+        red_mask = (
+            cv2.inRange(hsv, (0,120,70), (10,255,255)) |
+            cv2.inRange(hsv, (170,120,70), (180,255,255))
+        )
+        contours, _ = cv2.findContours(red_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        cv2.line(frame, (w//2, 0), (w//2, h), (0, 255, 0), 2)
+        cv2.line(frame, (0, h//2), (w, h//2), (0, 0, 255), 2)
+        if contours:
+            largest = max(contours, key=cv2.contourArea)
+            area = cv2.contourArea(largest)
+            if area > 500:
+                rect = cv2.minAreaRect(largest)
+                angle = rect[2]
+                box = cv2.boxPoints(rect)
+                box = box.astype(int)
+                cv2.drawContours(frame, [box], 0, (0, 255, 0), 2)
+                cx = int(rect[0][0])
+                cy = int(rect[0][1])
+                self.err_r = angle
+                cv2.putText(frame, f"err_r(deg): {self.err_r:.1f}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
+                cv2.line(frame, (cx, cy), (w // 2, cy), (255, 0, 0), 2)
+                cv2.line(frame, (cx, cy), (cx, h // 2), (255, 0, 0), 2)
+
     def send_pose(self, pose, t):
         traj = JointTrajectory()
         traj.joint_names = JOINTS
@@ -112,6 +149,14 @@ class AutoPickBox(Node):
         traj.points = [p]
         self.joint_publisher.publish(traj)
 
+    def handleGrippers(self, action):
+        pose = self.current_pose.copy()
+        pose[5] = 0.03 if action == "open" else 0.0
+        pose[6] = 0.03 if action == "open" else 0.0
+        self.send_pose(pose, 0.001)
+        self.current_pose = pose
+        self.get_logger().info(f"{action} gripper={pose}")
+
     def callFunctions(self):
         match self.step:
             case 0:
@@ -120,6 +165,8 @@ class AutoPickBox(Node):
                 self.search_pose()
             case 2:
                 self.find_box()
+            case 3:
+                self.align_wrist_gripper()
             case _:
                 pass
 
@@ -144,6 +191,19 @@ class AutoPickBox(Node):
             self.shoulder_dir *= -1
         pose[0] += self.shoulder_dir * self.shoulder_step
         self.send_pose(pose, 0.1)
+        self.current_pose = pose
+
+    def align_wrist_gripper(self):
+        if abs(self.err_r) >= 90.0:
+            self.get_logger().info("wrist aligned → now shoulder")
+            self.handleGrippers("open")
+            self.step = 4
+            return
+        pose = self.current_pose.copy()
+        if pose[4] >= self.wrist_max or pose[4] <= self.wrist_min:
+            self.wrist_dir *= -1
+        pose[4] += self.wrist_dir * self.wrist_step
+        self.send_pose(pose, 0.01)
         self.current_pose = pose
 
 def main():

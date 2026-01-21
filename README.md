@@ -230,7 +230,7 @@ chmod +x drive_car.py
 
 # GOAL 8: Auto Pick object
 
-### STEP 1: Render the object in dock view
+### STEP 1: Render the opencv in dock view
 
 - Terminal 1: 
 ```
@@ -252,3 +252,24 @@ chmod +x camera_view.py
 - ![alt text](./src/images/image-15.png)
 - Terminal 5: ros2 run nexus_arm_auto camera_view
 - ![alt text](./src/images/image-16.png)
+
+### STEP 2: Create a file auto_pick_box
+```
+cd ~/ros2_nexus_fleet_ws/src/nexus_arm_auto/nexus_arm_auto
+touch auto_pick_box.py
+chmod +x auto_pick_box.py
+```
+- Add to console_scripts ```'auto_pick_box = nexus_arm_auto.auto_pick_box:main',```
+- Add class, write a function to see what /arm_image sees
+- Add bridge, add subscription to see images, add cv2 for window
+- [BUILD](#build)
+- Terminal 4: ros2 run nexus_arm_auto auto_pick_box
+
+### STEP 3: Set arm to default pose
+- Declare JOINTS (all)
+- create timer, import it
+- We need to read joints **JointState** , send angles **JointTrajectoryPoint**
+- Define all points to **0.0**, declare a variable
+- Create a common function to send poses
+- Terminal 4: ros2 run nexus_arm_auto auto_pick_box
+- ![alt text](./src/images/image-17.png)

@@ -26,6 +26,7 @@ setup(
         'console_scripts': [
             'camera_view = nexus_arm_auto.camera_view:main',
             'search_align_shoulder = nexus_arm_auto.search_align_shoulder:main',
+            'auto_pick_box = nexus_arm_auto.auto_pick_box:main',
         ],
     },
 )

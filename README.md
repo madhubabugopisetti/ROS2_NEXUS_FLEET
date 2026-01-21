@@ -314,8 +314,15 @@ center of box to center of height of opencvwindow
 - We use P from PID, we change direction if error get bigger, if error get smaller, we change speed of it
 - ![alt text](./src/images/image-23.png)
 
-### STEP 8: Align X Y Z - AXIS
+### STEP 8: Align Z - AXIS
 - write a align_elbox_zaxis func for aligning all axis
 - We move elbow in same direction, till red box again goes into gap_between
-- Then we stop and align X Y axis
+- Then we stop
 - ![alt text](./src/images/image-24.png)
+
+### STEP 8: Positioning - Align X Y Z axis
+- Now we move elbow + forarm
+- Elbow moves in same direction and forearm in opposite direction
+- ![alt text](./src/images/image-25.png)
+- We call gripper to hold
+- ![alt text](./src/images/image-26.png)

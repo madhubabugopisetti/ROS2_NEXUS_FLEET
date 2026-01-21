@@ -201,6 +201,8 @@ class AutoPickBox(Node):
                 self.align_forearm_xaxis()
             case 6:
                 self.align_elbox_zaxis()
+            case 7:
+                self.positioning()
             case _:
                 pass
 
@@ -256,7 +258,11 @@ class AutoPickBox(Node):
     def align_forearm_xaxis(self):
         if abs(self.err_x) <= 2.0:
             self.get_logger().info("forearm aligned → now elbow")
-            self.step = 6
+            if self.arm_fixed:
+                self.get_logger().info("DONE")
+                self.step = 7
+            else:
+                self.step = 6
             return
         Kp = 0.0001
         delta = Kp * self.err_x
@@ -294,6 +300,18 @@ class AutoPickBox(Node):
         self.get_logger().info(f"[ELBOW PHASE] elbow={pose[1]:.4f}")
         self.send_pose(pose, 0.02)
         self.current_pose = pose
+
+    def positioning(self):
+        time.sleep(2)
+        pose = self.current_pose.copy()
+        self.get_logger().info(f"POSE BEFORE - {pose}")
+        pose[1] += 0.25
+        pose[2] -= 0.2
+        self.send_pose(pose, 5)
+        self.current_pose = pose
+        self.get_logger().info(f"POSE AFTER - {pose}")
+        time.sleep(10)
+        self.handleGrippers("close")
 
 def main():
     rclpy.init()
